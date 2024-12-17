@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"os"
@@ -336,9 +337,13 @@ func handleError(err error) {
 	}
 }
 func main() {
-	db, err := sql.Open("postgres", "user=postgres password= dbname=KURSOVAYA sslmode=disable")
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("env не найдено")
+	}
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 	defer db.Close()
 
